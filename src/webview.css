@@ -1,0 +1,189 @@
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  color: #ddd;
+  font:
+    13px system-ui,
+    sans-serif;
+}
+header {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px;
+  background: #252526;
+}
+button {
+  color: inherit;
+  background: #333;
+  border: 1px solid #666;
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+#file-stack {
+  flex: 1;
+  min-width: 0;
+  max-height: 30vh;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+}
+#file-stack li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 20px;
+}
+#file-stack [aria-current="page"] {
+  font-weight: 600;
+}
+#status {
+  padding: 4px 8px;
+  min-height: 18px;
+}
+#diagnostics {
+  max-height: 35vh;
+  overflow: auto;
+  padding: 8px;
+  background: #421b1b;
+}
+#diagnostics pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+#attributes {
+  box-sizing: border-box;
+  width: clamp(10rem, 28%, 20rem);
+  max-width: 45%;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  padding: 12px;
+  border-left: 1px solid var(--vscode-sideBar-border, #404040);
+  background: var(--vscode-sideBar-background, #252526);
+  color: var(--vscode-sideBar-foreground, #ddd);
+}
+#attributes h2 {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+#selection-name {
+  margin: 0 0 12px;
+}
+#selection-name[data-active] {
+  font-weight: 600;
+}
+#attributes dt,
+#attributes h3 {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+#attributes dd {
+  margin: 0 0 8px;
+}
+#attributes dd,
+#property-table tbody {
+  font-family: var(--vscode-editor-font-family, monospace);
+  white-space: pre-wrap;
+}
+#property-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+#property-table th,
+#property-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--vscode-sideBar-border, #404040);
+  text-align: left;
+  vertical-align: top;
+}
+#property-table thead th:first-child {
+  width: 35%;
+}
+#property-table tbody th {
+  font-weight: normal;
+}
+#no-properties {
+  margin: 0;
+  color: var(--vscode-descriptionForeground, #aaa);
+}
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: visible;
+}
+g[data-symbol] {
+  cursor: pointer;
+  pointer-events: bounding-box;
+}
+g[data-symbol] > :not(g[data-symbol]) {
+  pointer-events: auto;
+}
+:where(main, g[data-symbol], g[data-waveform-graph]) {
+  outline: none;
+}
+:where(main, g[data-symbol], g[data-waveform-graph]):focus-visible {
+  outline: 1px dashed #ddd;
+}
+g[data-missing] {
+  outline: 2px solid #f55;
+}
+[data-schematic-object],
+[data-waveform-graph] {
+  cursor: pointer;
+}
+svg [data-selected] {
+  outline: 2px solid #6ccfff;
+}
+[data-waveform-graph][data-selected] > rect:first-of-type {
+  stroke: #6ccfff;
+}
+#waveform-view {
+  margin-bottom: 12px;
+}
+.waveform-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin-bottom: 6px;
+}
+.waveform-buttons button {
+  padding: 2px 6px;
+}
+.waveform-buttons label {
+  white-space: nowrap;
+}
+.waveform-buttons select {
+  color: var(--vscode-dropdown-foreground, #ddd);
+  background: var(--vscode-dropdown-background, #333);
+}
+.waveform-hint,
+#waveform-source,
+#waveform-link-status {
+  margin: 4px 0;
+  color: var(--vscode-descriptionForeground, #aaa);
+  font-size: 12px;
+}

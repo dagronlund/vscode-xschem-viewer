@@ -1,6 +1,7 @@
-node_modules
-xschem-viewer
-xschem_lib
+/node_modules
+/.cache
 tsconfig.tsbuildinfo
 *.vsix
-dist
+/dist
+test-results
+playwright-report

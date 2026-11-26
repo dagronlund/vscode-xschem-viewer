@@ -1,32 +1,83 @@
-# vscode-xschem-viewer
+# Xschem Viewer with local libraries
 
-[![Build and Release](https://github.com/barakhoffer/vscode-xschem-viewer/actions/workflows/release.yaml/badge.svg)](https://github.com/barakhoffer/vscode-xschem-viewer/actions/workflows/release.yaml)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+Preview Xschem schematics and symbols in VS Code with local libraries and hierarchy navigation.
+This is a fork of two existing projects (this extension and the standalone web viewer).
 
-Explore and visualize [XSchem](https://xschem.sourceforge.io/stefan/index.html) schematics in vscode, using [xschem-viewer](https://github.com/TinyTapeout/xschem-viewer) by Tiny Tapeout.
+- VS Code extension ([dagronlund/vscode-xschem-viewer](https://github.com/dagronlund/vscode-xschem-viewer))
+    - Fork of ([barakhoffer/vscode-xschem-viewer](https://github.com/barakhoffer/vscode-xschem-viewer))
+- Standalone web viewer ([dagronlund/xschem-viewer](https://github.com/dagronlund/xschem-viewer))
+    - Fork of ([TinyTapeout/xschem-viewer](https://github.com/TinyTapeout/xschem-viewer))
+- Rust parser ([dagronlund/xschem-rs](https://github.com/dagronlund/xschem-rs))
 
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
-To learn more and get started, visit [tinytapeout.com](https://tinytapeout.com).
+## Build and install
 
-## Local Development
+Requires Node.js 22 or newer, npm, Git, Rust with its WebAssembly target, and sibling checkouts of the web viewer and Rust parser at `../xschem-viewer` and `../xschem-rs`.
 
-### Prerequisites
+```sh
+rustup target add wasm32-unknown-unknown
+npm ci
+npm run package
+code --install-extension ./vscode-xschem-viewer-1.1.3.vsix --force
+```
 
-- [Visual Studio Code](https://code.visualstudio.com/)
-- [Node.js](https://nodejs.org/en/) (v20 or later) and NPM (usually comes with Node.js)
+Reload VS Code after installing.
+The extension opens `.sch` or `.sym` files in the graphical preview by default.
+To edit the source, right-click the tab and choose **Reopen Editor With → Text Editor**.
+Syntax highlighting in the text editor uses the `v {xschem version=…}` header on the first nonblank line to identify Xschem files.
 
-### Instructions
+## Library configuration
 
-1. Clone the repository
-2. Run `npm install` to install dependencies
-3. Run `npm run build` to build the extension
-4. Hit F5 to start the vscode extension development host
+Create `xschem.toml` at the root of the VS Code workspace folder that contains the drawing.
 
-Enjoy!
+```toml
+[libraries]
+devices = { path = "libraries/devices" }
+symbols = { path = "libraries/symbols" }
+```
 
-## Change Log
-- 13/12/24 - version 1.0.1, add buttons to run simulation and open xschem
+In a trusted workspace, the preview searches the containing file's directory, the `[libraries]` entries in order, the workspace root, and then `XSCHEM_LIBRARY_PATH`.
+The `xschem.libraryPaths` VS Code setting supplies the library entries when `[libraries]` is absent or the workspace is untrusted.
 
-## License
+## Preview and hierarchy
 
-vscode-xschem-viewer is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for more details.
+Double-click a component, or focus it and press Enter, to open its schematic view.
+Use **Up** to open the parent schematic, **Top** to return to the original file, and **Reload** to reread the current file.
+Scroll to zoom and drag to pan.
+For missing symbols, check the attempted paths in the error panel or the **Xschem Viewer** Output channel.
+
+## Waveforms
+
+Schematic graphs display saved ngspice results.
+The viewer uses the graph's `rawfile` when set, or looks beside the schematic and in the workspace's `simulations` directory for files such as `<schematic>.<analysis>.raw` and `<schematic>.raw`.
+Set `xschem.simulationDirectory` to use a different results directory.
+Use **Load Waves…** to pick a file or **Reload** to reread saved results.
+
+Click a graph to open the **Waveform** sidebar.
+Hold Alt/Option while dragging to pan or scrolling to zoom.
+Use **Link X** to synchronize compatible plots and **Reset to Saved View** to restore their saved ranges.
+
+## Native commands
+
+**Open in Xschem** and **Run Xschem Simulation** use the configured executable and argument array.
+They run from the workspace root and pass paths as separate arguments without a shell.
+Simulation adds `-x -n -S -q` before the opened file's path.
+Native commands require a trusted workspace and report launch failures in VS Code.
+
+## Verification
+
+```sh
+npm test           # Resolver unit tests
+npm run build
+npm run test:e2e   # Browser tests
+```
+
+On macOS the browser tests use installed Google Chrome by default.
+On other platforms run `npx playwright install chromium` before running them.
+Set `CHROME_BIN` to use a different browser executable.
+
+To run the optional smoke test in an installed copy of VS Code, point `XSCHEM_TEST_VSCODE` at the application executable.
+
+```sh
+XSCHEM_TEST_VSCODE=/path/to/vscode-executable \
+npm run test:e2e -- vscode.e2e.ts
+```

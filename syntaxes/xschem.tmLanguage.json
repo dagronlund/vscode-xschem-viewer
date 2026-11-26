@@ -1,0 +1,153 @@
+{
+  "name": "Xschem",
+  "scopeName": "source.xschem",
+  "patterns": [
+    { "include": "#header" },
+    { "include": "#component-reference" },
+    { "include": "#braced-text" },
+    { "include": "#properties" },
+    { "include": "#number" },
+    {
+      "match": "^[ \t]*([ABCEFGKLNPSTV])(?=[ \t]|$)",
+      "captures": {
+        "1": { "name": "keyword.other.record.xschem" }
+      }
+    },
+    {
+      "match": "^[ \t]*([\\[\\]])(?=[ \t]*$)",
+      "captures": {
+        "1": { "name": "punctuation.section.embedded.xschem" }
+      }
+    },
+    {
+      "name": "comment.line.number-sign.xschem",
+      "match": "^[ \t]*(#).*$",
+      "captures": {
+        "1": { "name": "punctuation.definition.comment.xschem" }
+      }
+    }
+  ],
+  "repository": {
+    "header": {
+      "name": "meta.header.xschem",
+      "begin": "^[ \t]*(v)[ \t]+(\\{)[ \t]*(xschem)(?=[ \t}]|$)",
+      "end": "\\}",
+      "beginCaptures": {
+        "1": { "name": "keyword.other.record.xschem" },
+        "2": { "name": "punctuation.section.braces.begin.xschem" },
+        "3": { "name": "keyword.other.header.xschem" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.braces.end.xschem" }
+      },
+      "patterns": [
+        { "include": "#escape" },
+        {
+          "match": "\\b((?:file_)?version)[ \t]*(=)[ \t]*([0-9][\\w.+-]*)",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.xschem" },
+            "2": { "name": "keyword.operator.assignment.xschem" },
+            "3": { "name": "constant.numeric.version.xschem" }
+          }
+        },
+        {
+          "name": "comment.line.asterisk.xschem",
+          "begin": "^[ \t]*(\\*)",
+          "end": "(?=\\})|$",
+          "beginCaptures": {
+            "1": { "name": "punctuation.definition.comment.xschem" }
+          },
+          "patterns": [{ "include": "#escape" }]
+        }
+      ]
+    },
+    "component-reference": {
+      "contentName": "string.unquoted.symbol-reference.xschem",
+      "begin": "^[ \t]*(C)[ \t]+(\\{)",
+      "end": "\\}",
+      "beginCaptures": {
+        "1": { "name": "keyword.other.record.xschem" },
+        "2": { "name": "punctuation.section.braces.begin.xschem" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.braces.end.xschem" }
+      },
+      "patterns": [{ "include": "#escape" }]
+    },
+    "braced-text": {
+      "contentName": "string.other.braced.xschem",
+      "begin": "^[ \t]*([EFSTV])[ \t]+(\\{)",
+      "end": "\\}",
+      "beginCaptures": {
+        "1": { "name": "keyword.other.record.xschem" },
+        "2": { "name": "punctuation.section.braces.begin.xschem" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.braces.end.xschem" }
+      },
+      "patterns": [{ "include": "#escape" }, { "include": "#substitution" }]
+    },
+    "properties": {
+      "name": "meta.properties.xschem",
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.braces.begin.xschem" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.braces.end.xschem" }
+      },
+      "patterns": [
+        { "include": "#escape" },
+        { "include": "#quoted-value" },
+        { "include": "#substitution" },
+        {
+          "match": "(?<![^\\s{])([^\\s{}=;\"\\\\]+)[ \\t]*(=)",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.xschem" },
+            "2": { "name": "keyword.operator.assignment.xschem" }
+          }
+        },
+        {
+          "match": "(?<==)[ \\t]*(true|false)(?=[\\s}]|$)",
+          "captures": {
+            "1": { "name": "constant.language.boolean.xschem" }
+          }
+        },
+        { "include": "#number" }
+      ]
+    },
+    "quoted-value": {
+      "name": "string.quoted.double.xschem",
+      "begin": "(?<==)[ \\t]*(\")",
+      "end": "\"|(?=\\})",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.string.begin.xschem" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.string.end.xschem" }
+      },
+      "patterns": [
+        {
+          "comment": "Xschem doubles backslashes on disk. Four stand for a literal backslash in the quoted value.",
+          "name": "constant.character.escape.xschem",
+          "match": "(?:\\\\){4}|(?:\\\\){1,2}\""
+        },
+        { "include": "#escape" },
+        { "include": "#substitution" }
+      ]
+    },
+    "number": {
+      "name": "constant.numeric.xschem",
+      "match": "(?<![^\\s{}=])[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?(?=[\\s{}]|$)"
+    },
+    "escape": {
+      "name": "constant.character.escape.xschem",
+      "match": "\\\\[\\\\{}]"
+    },
+    "substitution": {
+      "name": "variable.other.substitution.xschem",
+      "match": "@(?:@?[A-Za-z_][\\w]*|#(?:\\d+|[A-Za-z_][\\w]*)(?::[\\w]+)?)"
+    }
+  }
+}

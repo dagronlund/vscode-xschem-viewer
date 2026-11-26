@@ -1,24 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "composite": true,
-    "sourceMap" : true,
-    "skipLibCheck": true,
-    "allowJs": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node", "vite/client"],
     "strict": true,
     "noEmit": true,
-    "isolatedModules": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "exclude": [
-    "src",
-    "xschem-viewer",
-    "xschem-lib",
-    "node_modules",
-    "vite.config.ts"
-  ]
+  "include": ["src", "test", "*.config.ts"]
 }
